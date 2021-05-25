@@ -1,0 +1,27 @@
+import requests,time
+from bs4 import BeautifulSoup
+import bs4, requests, os
+from urllib.error import HTTPError
+from urllib.request import urlretrieve
+response = requests.get(
+    "https://www.facebook.com/chshb.tw/")
+soup = BeautifulSoup(response.text, "html.parser")
+
+destDir = 'teet'                                # 設定未來儲存圖片的資料夾
+if os.path.exists(destDir) == False:
+    os.mkdir(destDir)  
+
+imgTag = soup.select('img')                      # 搜尋所有圖片檔案
+print("搜尋到的圖片數量 = ", len(imgTag))           # 列出搜尋到的圖片數量
+if len(imgTag) > 0:                                 # 如果有找到圖片則執行下載與儲存
+    try:
+        x=1
+        for link in range(len(imgTag)) :
+            imgUrl = imgTag[link].get('src')    
+            local = os.path.join('C:\\Users\\user\\Downloads\\teet\\%s.jpg' % x) 
+            x+=1
+            urlretrieve(imgUrl,local)
+            time.sleep(1)
+            print('第',x-1,'張下載完成!')
+    except HTTPError as e:
+        print("已全部下載完成")
